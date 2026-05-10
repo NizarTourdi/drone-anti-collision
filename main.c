@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#define DMIN 5.0f
 typedef struct {
     int id;
     float x;
@@ -15,7 +16,7 @@ float calcule_distance(Drone *d2, Drone *d1){
     float distance= sqrt(dx*dx+dy*dy+dz*dz);
     return distance;
 }
-bool respect_distance(Drone *d1,Drone *d2, int dmin ){
+bool respect_distance(Drone *d1,Drone *d2, float dmin ){
     float distance= calcule_distance(d1,d2);
     if (distance>=dmin){
         return true;
@@ -23,7 +24,7 @@ bool respect_distance(Drone *d1,Drone *d2, int dmin ){
         return false;
     }
 }
-void corriger_distance(Drone *a, Drone *b, int dmin){
+void corriger_distance(Drone *a, Drone *b, float dmin){
     float distance=calcule_distance(a,b);
     if (!respect_distance(a,b,dmin)&& distance>0){
         float correcteur=dmin/distance;
@@ -93,10 +94,10 @@ int main(){
         for(int j=i+1; j<N;j++){
             Drone *d1 = drone + i;
             Drone *d2 = drone + j;
-            if((d2->x - d1->x)>5) break;
-            if (!respect_distance(d1,d2,5)){
+            if((d2->x - d1->x)>=DMIN) break;
+            if (!respect_distance(d1,d2,DMIN)){
                 printf("alerte: Drones %d et %d trop proches!\n", d1->id, d2->id);
-                corriger_distance(d1,d2, 5);
+                corriger_distance(d1,d2, DMIN);
             }
         }
     }
